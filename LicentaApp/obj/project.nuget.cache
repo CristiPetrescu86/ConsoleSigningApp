@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "SboJnoYFks4exxdp6I9jrKMmf6ICBLn5487xc+Yd0dPHhepqSgHWEoP2PO3lUhs5RERa9OVIWYTfo9ItuO1TJw==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\cpetr\\source\\repos\\LicentaApp\\LicentaApp\\LicentaApp.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\cpetr\\.nuget\\packages\\jobject\\1.0.0\\jobject.1.0.0.nupkg.sha512",
+    "C:\\Users\\cpetr\\.nuget\\packages\\newtonsoft.json\\11.0.2\\newtonsoft.json.11.0.2.nupkg.sha512",
+    "C:\\Users\\cpetr\\.nuget\\packages\\restsharp\\106.13.0\\restsharp.106.13.0.nupkg.sha512"
+  ],
+  "logs": []
+}
