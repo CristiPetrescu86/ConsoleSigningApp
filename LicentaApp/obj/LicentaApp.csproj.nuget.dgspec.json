@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\cpetr\\source\\repos\\LicentaApp\\LicentaApp\\LicentaApp.csproj": {}
+    "D:\\Facultate\\Licenta\\Github_Lic\\ConsoleApp\\ConsoleSigningApp\\LicentaApp\\LicentaApp.csproj": {}
   },
   "projects": {
-    "C:\\Users\\cpetr\\source\\repos\\LicentaApp\\LicentaApp\\LicentaApp.csproj": {
+    "D:\\Facultate\\Licenta\\Github_Lic\\ConsoleApp\\ConsoleSigningApp\\LicentaApp\\LicentaApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\cpetr\\source\\repos\\LicentaApp\\LicentaApp\\LicentaApp.csproj",
+        "projectUniqueName": "D:\\Facultate\\Licenta\\Github_Lic\\ConsoleApp\\ConsoleSigningApp\\LicentaApp\\LicentaApp.csproj",
         "projectName": "LicentaApp",
-        "projectPath": "C:\\Users\\cpetr\\source\\repos\\LicentaApp\\LicentaApp\\LicentaApp.csproj",
+        "projectPath": "D:\\Facultate\\Licenta\\Github_Lic\\ConsoleApp\\ConsoleSigningApp\\LicentaApp\\LicentaApp.csproj",
         "packagesPath": "C:\\Users\\cpetr\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\cpetr\\source\\repos\\LicentaApp\\LicentaApp\\obj\\",
+        "outputPath": "D:\\Facultate\\Licenta\\Github_Lic\\ConsoleApp\\ConsoleSigningApp\\LicentaApp\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
