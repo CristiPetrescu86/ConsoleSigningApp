@@ -20,7 +20,7 @@ namespace LicentaApp.JsonClass
 
         public string oauth2 { get; set; }
 
-        public List<string> methods { get; set;}
+        public List<string> methods { get; set; }
 
-    }
+}
 }

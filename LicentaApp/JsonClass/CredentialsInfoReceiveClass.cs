@@ -27,6 +27,7 @@ namespace LicentaApp.JsonClass
         public int multisign { get; set; } = 1;
         public string lang { get; set; }
 
+
     }
 
 
@@ -40,6 +41,12 @@ namespace LicentaApp.JsonClass
         public int len { get; set; }
 
         public string curve { get; set; }
+
+
+        public Key()
+        {
+            algo = new List<string>();
+        }
     }
 
     public class Certificates
@@ -52,6 +59,11 @@ namespace LicentaApp.JsonClass
         public string subjectDN { get; set; }
         public string validFrom { get; set; }
         public string validTo { get; set; }
+
+        public Certificates()
+        {
+            certificates = new List<string>();
+        }
     }
 
     public class PIN_Class

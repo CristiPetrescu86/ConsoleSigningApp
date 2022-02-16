@@ -19,22 +19,14 @@ namespace LicentaApp
     class User
     {
         // Credentiale
-        private string username
-        {
-            get; set;
-        }
-        private string password
-        {
-            get; set;
-        }
+        private string username{ get; set; }
+        private string password{ get; set; }
+
      
         // Credentiale aplicatie
         
         
-        private int expiresIn
-        {
-            get;set;
-        }
+        private int expiresIn{ get; set; }
 
         #region AUTH/LOGIN
         // campuri AUTH/LOGIN --------------------
@@ -91,7 +83,7 @@ namespace LicentaApp
 
         // output =====
 
-        public List<CredentialsInfoReceiveClass> keysInfo;
+        public List<CredentialsInfoReceiveClass> keysInfo = new List<CredentialsInfoReceiveClass>();
 
         // ---------------------------------------------
         #endregion CREDENTIALS/INFO
@@ -264,7 +256,7 @@ namespace LicentaApp
                 method.token_type_hint = "access_token";
                 var jsonString = JsonSerializer.Serialize(method, jsonSerializerOptions);
 
-                Console.WriteLine(jsonString);
+                //Console.WriteLine(jsonString);
 
                 var client = new RestClient("https://service.csctest.online/csc/v1/auth/revoke");
                 var request = new RestRequest();
@@ -557,94 +549,117 @@ namespace LicentaApp
             currentSAD = methodResponse;
         }
 
-        public void credentialsExtendTransaction()
+        public void credentialsExtendTransaction(List<string> pdfName, string credentialName)
         {
-            //byte[] hashDocument;
-            //string hashedDocumentB64;
+            byte[] hashDocument;
+            string hashedDocumentB64;
 
-            //string data = "{";
+            int index = -1;
+            for (int i = 0; i < keysInfo.Count; i++)
+            {
+                if (keysInfo[i].credentialName == credentialName)
+                {
+                    index = i;
+                    break;
+                }
+            }
 
-            //int numSignatures = 1;
+            var method = new ExtendTransactionSendClass();
+
+            var jsonSerializerOptions = new JsonSerializerOptions()
+            {
+                IgnoreNullValues = true
+            };
+
+            method.credentialID = keysInfo[index].credentialName;
 
 
-            ////if isset PIN
-            ////if isset OTP
-            ////if isset credID
+            if (numSignatures == 1)
+            {
+                hashDocument = SHAClass.Instance.getSHA256Hash("uart.pdf");
+                hashedDocumentB64 = Convert.ToBase64String(hashDocument);
 
-            //data += "\"credentialID\": \"" + credentialsIDs[1] + "\"";
+                method.hash.Add(hashedDocumentB64);
+            }
+            else
+            {
+                //foreach var el in listDocuments..
+            }
 
-            //if (SCAL == 2)
+            method.SAD = currentSAD.SAD;
+
+            //if (credAuthorizeClientDataBool)
             //{
-            //    if (numSignatures == 1)
-            //    {
-            //        hashDocument = SHAClass.Instance.getSHA256Hash("uart.pdf");
-            //        hashedDocumentB64 = Convert.ToBase64String(hashDocument);
-
-            //        data += ",\"hash\": [\"" + hashedDocumentB64 + "\"]";
-            //    }
-            //    else
-            //    {
-            //        //foreach var el in listDocuments..
-            //    }
-
-
-            //}
-            //// else if SCAL == 1 && want send hash
-
-            //data += ",\"SAD\": \"" + SAD + "\"";            
-            ////if (credAuthorizeClientDataBool)
-            ////{
-            ////    //add clientdatabool
-            ////    data += ",\"clientData\": \"12345678\"";
-            ////}
-
-            //data += "}";
-
-            //Console.WriteLine(data);
-
-            //var client = new RestClient("https://service.csctest.online/csc/v1/credentials/extendTransaction");
-
-            //var request = new RestRequest();
-            //request.AddHeader("Authorization", "Bearer " + accessToken);
-            //request.AddJsonBody(data);
-
-            //var response = client.Post(request);
-
-            //Console.WriteLine(response.Content.ToString());
-
-            //dynamic inform = JObject.Parse(response.Content.ToString());
-
-            //if (inform.error == "invalid_request")
-            //{
-            //    Console.WriteLine(inform.error_description);
-            //    return;
+            //    //add clientdatabool
+            //    method.clientData = clientDataAuthString;
             //}
 
-            //SAD = inform.SAD;
-            //if (inform.expiresIn != null)
-            //{
-            //    expiresSADin = inform.expiresIn;
-            //}
+            var jsonString = JsonSerializer.Serialize(method, jsonSerializerOptions);
+
+            var client = new RestClient("https://service.csctest.online/csc/v1/credentials/extendTransaction");
+
+            var request = new RestRequest();
+            request.AddHeader("Authorization", "Bearer " + accessToken);
+            request.AddJsonBody(jsonString);
+            var response = client.Post(request);
+
+            ExtendTransactionReceiveClass methodResponse = JsonSerializer.Deserialize<ExtendTransactionReceiveClass>(response.Content.ToString(), jsonSerializerOptions);
+
+            if(methodResponse.SAD == null)
+            {
+                dynamic inform = JObject.Parse(response.Content.ToString());
+                if (inform.error == "invalid_request")
+                {
+                    Console.WriteLine(inform.error_description);
+                    return;
+                }
+            }
+
+            currentSAD.SAD = methodResponse.SAD;
+            if(methodResponse.expiresIn != 3600 && methodResponse.expiresIn != null)
+            {
+                currentSAD.expiresIn = methodResponse.expiresIn;
+            }
         }
 
-        public void credentialsSendOTP()
+        public void credentialsSendOTP(string credentialName)
         {
-            string data = "{";
+            int index = -1;
+            for (int i = 0; i < keysInfo.Count; i++)
+            {
+                if (keysInfo[i].credentialName == credentialName)
+                {
+                    index = i;
+                    break;
+                }
+            }
 
-            data += "\"credentialID\": \"" + credentialsIDs[1] + "\"";
+            if(index == -1)
+            {
+                return;
+            }
+
+            var method = new SendOTPClass();
+
+            var jsonSerializerOptions = new JsonSerializerOptions()
+            {
+                IgnoreNullValues = true
+            };
+
+            method.credentialID = keysInfo[index].credentialName;
 
             //if(clientDataAuthBool)
             //{
-            //    data += ",\"clientData\": \"" + clientDataString + "\"";
+            //    method.clientData = clientDataAuthString;
             //}
 
-            data += "}";
+            var jsonString = JsonSerializer.Serialize(method, jsonSerializerOptions);
 
             var client = new RestClient("https://service.csctest.online/csc/v1/credentials/sendOTP");
 
             var request = new RestRequest();
             request.AddHeader("Authorization", "Bearer " + accessToken);
-            request.AddJsonBody(data);
+            request.AddJsonBody(jsonString);
 
             var response = client.Post(request);
 
@@ -659,27 +674,49 @@ namespace LicentaApp
 
         public void signSingleHash(List<string> pdfName, string credentialName)
         {
-            string data = "{";
+            int index = -1;
+            for (int i = 0; i < keysInfo.Count; i++)
+            {
+                if (keysInfo[i].credentialName == credentialName)
+                {
+                    index = i;
+                    break;
+                }
+            }
 
-            // credential set
-            data += "\"credentialID\": \"" + credentialsIDs[1] + "\"";
-            data += ",\"SAD\": \"" + SAD + "\"";
+            if(index == -1)
+            {
+                Console.WriteLine("Error");
+                return;
+            }
+
+            var method = new SignHashSendClass();
+
+            var jsonSerializerOptions = new JsonSerializerOptions()
+            {
+                IgnoreNullValues = true
+            };
+
+            method.credentialID = keysInfo[index].credentialName;
+            method.SAD = currentSAD.SAD;
+
 
             byte[] hashDocument = SHAClass.Instance.getSHA256Hash("test.pdf");
             string hashedDocumentB64 = Convert.ToBase64String(hashDocument);
-            data += ",\"hash\": [\"" + hashedDocumentB64 + "\"]";
+
+            method.hash.Add(hashedDocumentB64);
 
 
-            if(credentialKeys.ElementAtOrDefault(1) != null)
+            if(keysInfo[index].key.algo.ElementAtOrDefault(1) != null)
             {
-                data += ",\"hashAlgo\": \"" + credentialKeys[1] + "\"";
+                method.hashAlgo = keysInfo[index].key.algo[1];
             }
             else
             {
-                data += ",\"hashAlgo\": \"2.16.840.1.101.3.4.2.1\"";
+                method.hashAlgo = "2.16.840.1.101.3.4.2.1";   
             }
 
-            data += ",\"signAlgo\": \"" + credentialKeys[0] + "\"";
+            method.signAlgo = keysInfo[index].key.algo[0];
 
 
             //if (clientDataAuthBool)
@@ -687,29 +724,30 @@ namespace LicentaApp
             //    data += "\"clientData\": \"" + clientDataString + "\"";
             //}
 
-            data += "}";
+            var jsonString = JsonSerializer.Serialize(method, jsonSerializerOptions);
 
-            //Console.WriteLine(data);
 
             var client = new RestClient("https://service.csctest.online/csc/v1/signatures/signHash");
 
             var request = new RestRequest();
             request.AddHeader("Authorization", "Bearer " + accessToken);
-            request.AddJsonBody(data);
+            request.AddJsonBody(jsonString);
 
             var response = client.Post(request);
 
-            //Console.WriteLine(response.Content.ToString());
+            SignHashReceiveClass methodResponse = JsonSerializer.Deserialize<SignHashReceiveClass>(response.Content.ToString(), jsonSerializerOptions);
 
-            dynamic inform = JObject.Parse(response.Content.ToString());
-
-            if (inform.error_description != null)
+            if (methodResponse.signatures[0] == null)
             {
-                Console.WriteLine(inform.error_description);
-                return;
+                dynamic inform = JObject.Parse(response.Content.ToString());
+                if (inform.error_description != null)
+                {
+                    Console.WriteLine(inform.error_description);
+                    return;
+                }
             }
 
-            foreach (string elem in inform.signatures)
+            foreach (string elem in methodResponse.signatures)
             {
                 signatures.Add(elem);
                 Console.WriteLine(elem);
@@ -791,9 +829,64 @@ namespace LicentaApp
         }
 
 
-        public void signatureTimestamp()
+        public void signatureTimestamp(List<string> pdfName, string credentialName)
         {
+            byte[] hashDocument;
+            string hashedDocumentB64;
 
+            int index = -1;
+            for (int i = 0; i < keysInfo.Count; i++)
+            {
+                if (keysInfo[i].credentialName == credentialName)
+                {
+                    index = i;
+                    break;
+                }
+            }
+
+            var method = new SignatureTimestampSendClass();
+
+            var jsonSerializerOptions = new JsonSerializerOptions()
+            {
+                IgnoreNullValues = true
+            };
+
+            hashDocument = SHAClass.Instance.getSHA256Hash(pdfName[0]);
+            hashedDocumentB64 = Convert.ToBase64String(hashDocument);
+
+            method.hash = hashedDocumentB64;
+
+            method.hashAlgo = keysInfo[index].key.algo[1];
+
+
+            //if (credAuthorizeClientDataBool)
+            //{
+            //    //add clientdatabool
+            //    method.clientData = clientDataAuthString;
+            //}
+
+            var jsonString = JsonSerializer.Serialize(method, jsonSerializerOptions);
+
+            var client = new RestClient("https://service.csctest.online/csc/v1/signatures/timestamp");
+
+            var request = new RestRequest();
+            request.AddHeader("Authorization", "Bearer " + accessToken);
+            request.AddJsonBody(jsonString);
+            var response = client.Post(request);
+
+            SignatureTimestampReceiveClass methodResponse = JsonSerializer.Deserialize<SignatureTimestampReceiveClass>(response.Content.ToString(), jsonSerializerOptions);
+
+            if (methodResponse.timestamp == null)
+            {
+                dynamic inform = JObject.Parse(response.Content.ToString());
+                if (inform.error == "invalid_request")
+                {
+                    Console.WriteLine(inform.error_description);
+                    return;
+                }
+            }
+
+            // save timestamp
         }
 
         public void oauth2Auth()
